@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Relay Dashboard — Creative Electronic</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/webp" href="assets/images/icon.webp">
+  <link rel="stylesheet" href="assets/css/W3.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/raleway.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+  <style>
+    body, h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+    body, html { height: 100%; margin: 0; line-height: 1.8; background-color: #121212; color: #ffffff; }
+
+    .bgimg-1 {
+      background-position: center;
+      background-size: cover;
+      background-color: #0e0e0e;
+      background-image: url('assets/images/background.webp');
+      min-height: 100%;
+      position: relative;
+    }
+
+    .hero-overlay {
+      background: rgba(0, 0, 0, 0.72);
+      min-height: 100vh;
+      padding: 90px 24px 40px;
+    }
+
+    .w3-bar .w3-button { padding: 16px 20px; font-weight: 500; }
+    .w3-bar { background-color: rgba(18, 18, 18, 0.95) !important; backdrop-filter: blur(8px); }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .relay-card {
+      background: rgba(28, 28, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(10px);
+    }
+    .relay-card.active {
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
+    }
+
+    .relay-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 0 0 6px;
+      color: #f1f5f9;
+    }
+
+    .gpio-badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    /* Switch Styling */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 76px;
+      height: 42px;
+      margin: 0 auto;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 42px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 32px;
+      width: 32px;
+      left: 4px;
+      bottom: 4px;
+      background-color: #e2e8f0;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+    }
+    input:checked + .slider:before {
+      transform: translateX(34px);
+      background-color: #ffffff;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .btn-all-on { background: rgba(34, 197, 94, 0.25); border-color: rgba(34, 197, 94, 0.4); }
+    .btn-all-on:hover { background: rgba(34, 197, 94, 0.4); }
+    .btn-all-off { background: rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.4); }
+    .btn-all-off:hover { background: rgba(239, 68, 68, 0.4); }
+
+    /* Toast Notification */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #1e293b;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 12px 16px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+    }
+    #toast.show { visibility: visible; animation: fadein 0.3s, fadeout 0.3s 2s; }
+    @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+    @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-card" id="myNavbar">
+      <a href="/" class="w3-bar-item w3-button w3-wide" title="Home">
+        <i class="fa fa-home"></i> HOME
+      </a>
+      <div class="w3-right w3-hide-small">
+        <a href="/dashboard" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+        <a href="/weather" class="w3-bar-item w3-button"><i class="fa fa-thermometer-half"></i> Weather</a>
+        <a href="/clock" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+        <a onclick="logoutButton()" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> Logout</a>
+      </div>
+      <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar -->
+  <nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none; z-index: 1000;" id="mySidebar">
+    <a href="javascript:void(0)" onclick="closeSidebar()" class="w3-bar-item w3-button w3-large w3-padding-16"><i class="fa fa-times"></i> Close</a>
+    <a href="/" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> Home</a>
+    <a href="/dashboard" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+    <a href="/weather" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-thermometer-half"></i> Weather</a>
+    <a href="/clock" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+    <a onclick="logoutButton()" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> Logout</a>
+  </nav>
+
+  <header class="bgimg-1">
+    <div class="hero-overlay">
+      <div class="dashboard-header">
+        <div>
+          <h2 style="margin:0; font-weight:700;"><i class="fa fa-sliders" style="color:#a855f7;"></i> Relay Control Center</h2>
+          <span style="color:#94a3b8; font-size:0.95rem;">Real-time 8-channel synchronized controller</span>
+        </div>
+        <div class="btn-group">
+          <button class="control-btn btn-all-on" onclick="masterControl(1)"><i class="fa fa-bolt"></i> All ON</button>
+          <button class="control-btn btn-all-off" onclick="masterControl(0)"><i class="fa fa-power-off"></i> All OFF</button>
+        </div>
+      </div>
+
+      <!-- Relay Grid Container -->
+      <div class="grid-container" id="relay-grid">
+        <div class="relay-card" id="card-1">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 1</div>
+          <div class="gpio-badge">GPIO 14</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="1"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-2">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 2</div>
+          <div class="gpio-badge">GPIO 18</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="2"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-3">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 3</div>
+          <div class="gpio-badge">GPIO 19</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="3"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-4">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 4</div>
+          <div class="gpio-badge">GPIO 23</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="4"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-5">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 5</div>
+          <div class="gpio-badge">GPIO 26</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="5"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-6">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 6</div>
+          <div class="gpio-badge">GPIO 27</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="6"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-7">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 7</div>
+          <div class="gpio-badge">GPIO 32</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="7"><span class="slider"></span></label></div>
+        </div>
+        <div class="relay-card" id="card-8">
+          <div class="relay-title"><i class="fa fa-lightbulb-o"></i> Channel 8</div>
+          <div class="gpio-badge">GPIO 33</div>
+          <div><label class="switch"><input type="checkbox" onchange="toggleCheckbox(this)" id="8"><span class="slider"></span></label></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="toast">Command sent successfully</div>
+
+  <script>
+    var sidebar = document.getElementById("mySidebar");
+    function toggleSidebar() { sidebar.style.display = (sidebar.style.display === 'block') ? 'none' : 'block'; }
+    function closeSidebar() { sidebar.style.display = 'none'; }
+
+    function showToast(msg) {
+      var t = document.getElementById("toast");
+      t.innerText = msg;
+      t.className = "show";
+      setTimeout(function(){ t.className = t.className.replace("show", ""); }, 2200);
+    }
+
+    function toggleCheckbox(element) {
+      var state = element.checked ? 1 : 0;
+      var card = document.getElementById("card-" + element.id);
+      if (card) {
+        if (state) card.classList.add("active");
+        else card.classList.remove("active");
+      }
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/update?relay=" + element.id + "&state=" + state, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          showToast("Relay #" + element.id + " set to " + (state ? "ON" : "OFF"));
+        }
+      };
+      xhr.send();
+    }
+
+    function masterControl(state) {
+      for (var i = 1; i <= 8; i++) {
+        var el = document.getElementById(String(i));
+        if (el) {
+          el.checked = (state === 1);
+          var card = document.getElementById("card-" + i);
+          if (card) {
+            if (state) card.classList.add("active");
+            else card.classList.remove("active");
+          }
+        }
+      }
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/update?relay=all&state=" + state, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          showToast("All Relays turned " + (state ? "ON" : "OFF"));
+        }
+      };
+      xhr.send();
+    }
+
+    function logoutButton() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/logout", true);
+      xhr.send();
+      setTimeout(function(){ window.open("/logged-out", "_self"); }, 800);
+    }
+
+    // Fetch initial relay states from REST API on page load
+    fetch('/api/status').then(function(res) {
+      if (res.ok) return res.json();
+      throw new Error();
+    }).then(function(data) {
+      if (data.relays) {
+        data.relays.forEach(function(r) {
+          var el = document.getElementById(String(r.id));
+          var card = document.getElementById("card-" + r.id);
+          if (el) el.checked = (r.state === 1);
+          if (card) {
+            if (r.state === 1) card.classList.add("active");
+            else card.classList.remove("active");
+          }
+        });
+      }
+    }).catch(function() {});
+
+    // Real-Time SSE synchronization across clients
+    if (!!window.EventSource) {
+      var source = new EventSource('/events');
+      source.addEventListener('relay', function(e) {
+        try {
+          var data = JSON.parse(e.data);
+          var el = document.getElementById(String(data.id));
+          if (el) {
+            el.checked = (data.state === 1);
+            var card = document.getElementById("card-" + data.id);
+            if (card) {
+              if (data.state === 1) card.classList.add("active");
+              else card.classList.remove("active");
+            }
+          }
+        } catch(err) {
+          console.error("SSE relay parse error:", err);
+        }
+      }, false);
+    }
+  </script>
+</body>
+</html>

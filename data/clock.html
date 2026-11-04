@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Clock — Creative Electronic</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/webp" href="assets/images/icon.webp">
+  <link rel="stylesheet" href="assets/css/W3.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/raleway.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+  <style>
+    body, h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+    body, html {
+      height: 100%;
+      margin: 0;
+      line-height: 1.8;
+      background-color: #000000;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    .bgimg-1 {
+      background-position: center;
+      background-size: cover;
+      background-image: url('assets/images/background.webp');
+      min-height: 100%;
+      background-color: #000;
+      position: relative;
+    }
+
+    .w3-bar .w3-button { padding: 16px 20px; }
+    .w3-bar {
+      background-color: rgba(0, 0, 0, 0.85) !important;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Clock Shell Container */
+    .clock-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 90px 20px 60px;
+      text-align: center;
+    }
+
+    /* Mode Switcher Tabs */
+    .mode-bar {
+      display: inline-flex;
+      background: rgba(20, 20, 25, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      padding: 4px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .mode-tab {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 8px 18px;
+      border-radius: 24px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+    .mode-tab.active {
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.5);
+    }
+
+    /* Unified Glassmorphic Card Container for all clocks */
+    .clock-panel {
+      background: rgba(24, 24, 27, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 38px 40px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      max-width: 740px;
+      width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* =========================================================
+       1. FLIQLO 3D MECHANICAL FLIP CLOCK
+       ========================================================= */
+    .flip-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+      margin: 10px 0;
+    }
+    .flip-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .flip-unit {
+      display: flex;
+      gap: 5px;
+    }
+
+    .flip-tile {
+      position: relative;
+      width: 72px;
+      height: 104px;
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+      perspective: 320px;
+      user-select: none;
+    }
+    /* Horizontal split hairline notch */
+    .flip-tile::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(50% - 1px);
+      height: 2px;
+      background: #09090c;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .tile-half, .tile-flap {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 52px; /* 50% */
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .tile-top, .flap-upper {
+      top: 0;
+      background: linear-gradient(to bottom, #2b2b36 0%, #1f1f28 100%);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom: 1px solid #101014;
+    }
+    .tile-bottom, .flap-lower {
+      bottom: 0;
+      background: linear-gradient(to bottom, #1c1c24 0%, #17171d 100%);
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Precision-centered digit box */
+    .digit-box {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 104px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      font-weight: 800;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f8fafc;
+      line-height: 1;
+      user-select: none;
+    }
+    .tile-top .digit-box, .flap-upper .digit-box {
+      top: 0;
+      transform: translateY(2px);
+    }
+    .tile-bottom .digit-box, .flap-lower .digit-box {
+      bottom: 0;
+      transform: translateY(2px);
+    }
+
+    /* Flaps when idle */
+    .tile-flap {
+      display: none;
+      z-index: 4;
+      backface-visibility: hidden;
+    }
+    .flap-upper {
+      transform-origin: 50% 100%;
+    }
+    .flap-lower {
+      transform-origin: 50% 0%;
+    }
+
+    /* Flipping 3D animation */
+    .flip-tile.flipping .tile-flap {
+      display: block;
+    }
+    .flip-tile.flipping .flap-upper {
+      animation: flipUpper 0.24s cubic-bezier(0.4, 0, 0.7, 1) forwards;
+    }
+    .flip-tile.flipping .flap-lower {
+      animation: flipLower 0.24s cubic-bezier(0.3, 0, 0.6, 1) 0.22s forwards;
+      transform: rotateX(90deg);
+    }
+
+    @keyframes flipUpper {
+      0% { transform: rotateX(0deg); }
+      100% { transform: rotateX(-90deg); }
+    }
+    @keyframes flipLower {
+      0% { transform: rotateX(90deg); }
+      100% { transform: rotateX(0deg); }
+    }
+
+    .flip-label {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+    .flip-divider {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #a855f7;
+      margin-top: -24px;
+      animation: blink 1s infinite;
+      user-select: none;
+    }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.2; } }
+
+    /* Period (AM/PM) tile */
+    .period-tile {
+      width: 72px;
+      height: 104px;
+      background: linear-gradient(to bottom, #23232c 0%, #17171f 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #c084fc;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    /* =========================================================
+       2. ANALOG CLOCK (Matches Reference Screenshot)
+       ========================================================= */
+    .analog-clock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .analog-dial {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      background: #ffffff;
+      border-radius: 50%;
+      border: 14px solid #23272a;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+      margin: 10px 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+    .analog-num {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      top: calc(50% - 15px);
+      left: calc(50% - 15px);
+      text-align: center;
+      line-height: 30px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #1e2022;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .num-12 { transform: rotate(0deg) translateY(-116px) rotate(0deg); }
+    .num-1  { transform: rotate(30deg) translateY(-116px) rotate(-30deg); }
+    .num-2  { transform: rotate(60deg) translateY(-116px) rotate(-60deg); }
+    .num-3  { transform: rotate(90deg) translateY(-116px) rotate(-90deg); }
+    .num-4  { transform: rotate(120deg) translateY(-116px) rotate(-120deg); }
+    .num-5  { transform: rotate(150deg) translateY(-116px) rotate(-150deg); }
+    .num-6  { transform: rotate(180deg) translateY(-116px) rotate(-180deg); }
+    .num-7  { transform: rotate(210deg) translateY(-116px) rotate(-210deg); }
+    .num-8  { transform: rotate(240deg) translateY(-116px) rotate(-240deg); }
+    .num-9  { transform: rotate(270deg) translateY(-116px) rotate(-270deg); }
+    .num-10 { transform: rotate(300deg) translateY(-116px) rotate(-300deg); }
+    .num-11 { transform: rotate(330deg) translateY(-116px) rotate(-330deg); }
+
+    /* Clock Hands */
+    .hand {
+      position: absolute;
+      border-radius: 6px;
+    }
+    .hour-hand {
+      width: 9px;
+      height: 72px;
+      background: #23272a;
+      bottom: 50%;
+      left: calc(50% - 4.5px);
+      transform-origin: 50% 100%;
+      border-radius: 6px;
+      z-index: 3;
+    }
+    .min-hand {
+      width: 6px;
+      height: 104px;
+      background: #4a4e54;
+      bottom: 50%;
+      left: calc(50% - 3px);
+      transform-origin: 50% 100%;
+      border-radius: 4px;
+      z-index: 4;
+    }
+    .sec-hand {
+      width: 2.5px;
+      height: 136px;
+      background: #dc2626;
+      bottom: calc(50% - 24px);
+      left: calc(50% - 1.25px);
+      transform-origin: 50% 112px;
+      border-radius: 2px;
+      z-index: 5;
+    }
+    .center-cap {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #23272a;
+      border-radius: 50%;
+      top: calc(50% - 9px);
+      left: calc(50% - 9px);
+      z-index: 6;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* =========================================================
+       3. CS50x NEON GLOW CLOCK
+       ========================================================= */
+    .cs50-glow {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      color: #ffffff;
+      animation: neonGlow 1.5s ease-in-out infinite alternate;
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 12px 0;
+      letter-spacing: 2px;
+    }
+    @keyframes neonGlow {
+      from {
+        text-shadow: 0 0 10px #ffffff, 0 0 20px #c084fc, 0 0 40px #a855f7, 0 0 60px #7c3aed;
+      }
+      to {
+        text-shadow: 0 0 15px #ffffff, 0 0 30px #e879f9, 0 0 50px #c084fc, 0 0 75px #a855f7;
+      }
+    }
+    .cs50-tag {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* =========================================================
+       4. MINIMAL MODERN CLOCK
+       ========================================================= */
+    .modern-time {
+      font-size: clamp(2.8rem, 7vw, 4.4rem);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 2px;
+      font-variant-numeric: tabular-nums;
+      margin: 8px 0;
+    }
+    .modern-period {
+      font-size: 1.2rem;
+      color: #a855f7;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    /* Controls Bar & Buttons */
+    .controls-bar {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .format-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .format-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .date-badge {
+      font-size: 1.15rem;
+      color: #cbd5e1;
+      margin-top: 14px;
+      font-weight: 500;
+    }
+
+    .social-bar a {
+      margin-right: 14px;
+      color: #b0b0b0;
+      transition: color 0.2s ease;
+    }
+    .social-bar a:hover { color: #ffffff; }
+
+    @media (max-width: 600px) {
+      .clock-panel {
+        padding: 24px 10px;
+        border-radius: 18px;
+      }
+      .flip-container {
+        gap: 6px;
+        flex-wrap: nowrap;
+      }
+      .flip-unit {
+        gap: 3px;
+      }
+      .flip-tile {
+        width: 38px;
+        height: 58px;
+        border-radius: 6px;
+      }
+      .tile-half, .tile-flap { height: 29px; }
+      .digit-box { height: 58px; font-size: 36px; }
+      .tile-top .digit-box, .flap-upper .digit-box { top: 0; transform: translateY(1px); }
+      .tile-bottom .digit-box, .flap-lower .digit-box { bottom: 0; transform: translateY(1px); }
+      .flip-divider { font-size: 1.5rem; margin-top: -10px; }
+      .period-tile { width: 38px; height: 58px; font-size: 0.92rem; border-radius: 6px; }
+      .analog-dial { width: 260px; height: 260px; border-width: 12px; }
+      .analog-num { font-size: 1.15rem; }
+      .num-12 { transform: rotate(0deg) translateY(-100px) rotate(0deg); }
+      .num-1  { transform: rotate(30deg) translateY(-100px) rotate(-30deg); }
+      .num-2  { transform: rotate(60deg) translateY(-100px) rotate(-60deg); }
+      .num-3  { transform: rotate(90deg) translateY(-100px) rotate(-90deg); }
+      .num-4  { transform: rotate(120deg) translateY(-100px) rotate(-120deg); }
+      .num-5  { transform: rotate(150deg) translateY(-100px) rotate(-150deg); }
+      .num-6  { transform: rotate(180deg) translateY(-100px) rotate(-180deg); }
+      .num-7  { transform: rotate(210deg) translateY(-100px) rotate(-210deg); }
+      .num-8  { transform: rotate(240deg) translateY(-100px) rotate(-240deg); }
+      .num-9  { transform: rotate(270deg) translateY(-100px) rotate(-270deg); }
+      .num-10 { transform: rotate(300deg) translateY(-100px) rotate(-300deg); }
+      .num-11 { transform: rotate(330deg) translateY(-100px) rotate(-330deg); }
+      .hour-hand { height: 62px; }
+      .min-hand { height: 90px; }
+      .sec-hand { height: 118px; bottom: calc(50% - 20px); transform-origin: 50% 98px; }
+      .mode-tab { padding: 6px 12px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-card" id="myNavbar">
+      <a href="/" class="w3-bar-item w3-button w3-wide" title="Home">
+        <i class="fa fa-home"></i> HOME
+      </a>
+      <div class="w3-right w3-hide-small">
+        <a href="/dashboard" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+        <a href="/weather" class="w3-bar-item w3-button"><i class="fa fa-thermometer-full"></i> Weather</a>
+        <a href="/clock" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+      </div>
+      <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="w3_open()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar -->
+  <nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none; z-index: 1000;" id="mySidebar">
+    <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button w3-large w3-padding-16"><i class="fa fa-times"></i> Close</a>
+    <a href="/" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> Home</a>
+    <a href="/dashboard" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+    <a href="/weather" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-thermometer-full"></i> Weather</a>
+    <a href="/clock" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+  </nav>
+
+  <header class="bgimg-1 w3-display-container">
+    <div class="clock-shell">
+
+      <!-- View Selector -->
+      <div class="mode-bar">
+        <button class="mode-tab active" onclick="switchMode('flip')" id="tab-flip"><i class="fa fa-hourglass-half"></i> Flip Clock</button>
+        <button class="mode-tab" onclick="switchMode('analog')" id="tab-analog"><i class="fa fa-circle-o-notch"></i> Analog Clock</button>
+        <button class="mode-tab" onclick="switchMode('cs50')" id="tab-cs50"><i class="fa fa-bolt"></i> CS50x Glow</button>
+        <button class="mode-tab" onclick="switchMode('modern')" id="tab-modern"><i class="fa fa-tablet"></i> Minimal Card</button>
+      </div>
+
+      <!-- Unified Clock Card Wrapper -->
+      <div class="clock-panel">
+
+        <!-- 1. FLIQLO FLIP CLOCK VIEW -->
+        <div id="view-flip" style="width: 100%;">
+          <div class="flip-container">
+            <!-- Hours -->
+            <div class="flip-group">
+              <div class="flip-unit">
+                <div class="flip-tile" id="flip-h1">
+                  <div class="tile-half tile-top"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-half tile-bottom"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-upper"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-lower"><div class="digit-box"><span class="d-val">0</span></div></div>
+                </div>
+                <div class="flip-tile" id="flip-h2">
+                  <div class="tile-half tile-top"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-half tile-bottom"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-upper"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-lower"><div class="digit-box"><span class="d-val">0</span></div></div>
+                </div>
+              </div>
+              <div class="flip-label">Hours</div>
+            </div>
+
+            <div class="flip-divider">:</div>
+
+            <!-- Minutes -->
+            <div class="flip-group">
+              <div class="flip-unit">
+                <div class="flip-tile" id="flip-m1">
+                  <div class="tile-half tile-top"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-half tile-bottom"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-upper"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-lower"><div class="digit-box"><span class="d-val">0</span></div></div>
+                </div>
+                <div class="flip-tile" id="flip-m2">
+                  <div class="tile-half tile-top"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-half tile-bottom"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-upper"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-lower"><div class="digit-box"><span class="d-val">0</span></div></div>
+                </div>
+              </div>
+              <div class="flip-label">Minutes</div>
+            </div>
+
+            <!-- Seconds Group (Toggled by showSeconds) -->
+            <div class="flip-divider" id="flip-sec-divider">:</div>
+
+            <div class="flip-group" id="flip-sec-group">
+              <div class="flip-unit">
+                <div class="flip-tile" id="flip-s1">
+                  <div class="tile-half tile-top"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-half tile-bottom"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-upper"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-lower"><div class="digit-box"><span class="d-val">0</span></div></div>
+                </div>
+                <div class="flip-tile" id="flip-s2">
+                  <div class="tile-half tile-top"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-half tile-bottom"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-upper"><div class="digit-box"><span class="d-val">0</span></div></div>
+                  <div class="tile-flap flap-lower"><div class="digit-box"><span class="d-val">0</span></div></div>
+                </div>
+              </div>
+              <div class="flip-label">Seconds</div>
+            </div>
+
+            <!-- AM/PM indicator for 12h mode -->
+            <div class="flip-group" id="flip-period-group" style="display:none;">
+              <div class="period-tile" id="flip-period">AM</div>
+              <div class="flip-label">Period</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ANALOG CLOCK VIEW -->
+        <div id="view-analog" style="display:none; width: 100%;">
+          <div class="analog-clock-container">
+            <div class="analog-dial">
+              <div class="analog-num num-12">12</div>
+              <div class="analog-num num-1">1</div>
+              <div class="analog-num num-2">2</div>
+              <div class="analog-num num-3">3</div>
+              <div class="analog-num num-4">4</div>
+              <div class="analog-num num-5">5</div>
+              <div class="analog-num num-6">6</div>
+              <div class="analog-num num-7">7</div>
+              <div class="analog-num num-8">8</div>
+              <div class="analog-num num-9">9</div>
+              <div class="analog-num num-10">10</div>
+              <div class="analog-num num-11">11</div>
+
+              <!-- Hands -->
+              <div class="hand hour-hand" id="analog-hour"></div>
+              <div class="hand min-hand" id="analog-min"></div>
+              <div class="hand sec-hand" id="analog-sec"></div>
+              <div class="center-cap"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. CS50x GLOW CLOCK VIEW -->
+        <div id="view-cs50" style="display:none; width: 100%;">
+          <div class="cs50-tag"><i class="fa fa-clock-o"></i> The Time is:</div>
+          <div id="cs50-clock" class="cs50-glow">00:00:00 AM</div>
+        </div>
+
+        <!-- 4. MINIMAL MODERN CLOCK VIEW -->
+        <div id="view-modern" style="display:none; width: 100%;">
+          <div style="color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+            <i class="fa fa-globe"></i> Synced Clock
+          </div>
+          <div class="modern-time" id="modern-clock">00:00:00<span class="modern-period" id="modern-period"></span></div>
+        </div>
+
+        <!-- Shared Calendar Date Badge -->
+        <div class="date-badge" id="shared-date">Loading date...</div>
+
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="controls-bar">
+        <button class="format-btn" onclick="toggleHourFormat()">
+          <i class="fa fa-exchange"></i> <span id="hour-mode-label">12-Hour</span>
+        </button>
+        <button class="format-btn" onclick="toggleSeconds()">
+          <i class="fa fa-eye"></i> Seconds: <span id="sec-mode-label" style="color: #34d399;">ON</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Bottom Left Social Links Bar -->
+    <div class="w3-display-bottomleft w3-text-grey w3-large social-bar" style="padding: 24px 48px;">
+      <a href="https://t.me/Nariman_Z" target="_blank" title="Telegram"><i class="fa fa-telegram"></i></a>
+      <a href="https://wa.me/+989197096780" target="_blank" title="WhatsApp"><i class="fa fa-whatsapp"></i></a>
+      <a href="https://www.instagram.com/creative_electronic_tm/" target="_blank" title="Instagram"><i class="fa fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@Nariman_Z" target="_blank" title="YouTube"><i class="fa fa-youtube"></i></a>
+      <a href="https://www.linkedin.com/in/nariman-z" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+      <a href="https://github.com/nariman-z/" target="_blank" title="GitHub"><i class="fa fa-github"></i></a>
+    </div>
+  </header>
+
+  <script>
+    var mySidebar = document.getElementById("mySidebar");
+    function w3_open() {
+      if (mySidebar.style.display === 'block') mySidebar.style.display = 'none';
+      else mySidebar.style.display = 'block';
+    }
+    function w3_close() { mySidebar.style.display = "none"; }
+
+    // Read URL param if provided for testing
+    var urlParams = new URLSearchParams(window.location.search);
+    var paramMode = urlParams.get('mode');
+
+    // Persistent User Preferences
+    var is24Hour = localStorage.getItem('clock_24h') === '1';
+    var showSeconds = localStorage.getItem('clock_seconds') !== '0'; // default true
+    var currentMode = paramMode || localStorage.getItem('clock_mode') || 'flip';
+
+    function switchMode(mode) {
+      currentMode = mode;
+      localStorage.setItem('clock_mode', mode);
+
+      document.getElementById('view-flip').style.display = (mode === 'flip') ? 'block' : 'none';
+      document.getElementById('view-analog').style.display = (mode === 'analog') ? 'block' : 'none';
+      document.getElementById('view-cs50').style.display = (mode === 'cs50') ? 'block' : 'none';
+      document.getElementById('view-modern').style.display = (mode === 'modern') ? 'block' : 'none';
+
+      document.getElementById('tab-flip').className = 'mode-tab' + (mode === 'flip' ? ' active' : '');
+      document.getElementById('tab-analog').className = 'mode-tab' + (mode === 'analog' ? ' active' : '');
+      document.getElementById('tab-cs50').className = 'mode-tab' + (mode === 'cs50' ? ' active' : '');
+      document.getElementById('tab-modern').className = 'mode-tab' + (mode === 'modern' ? ' active' : '');
+
+      updateClocks();
+    }
+
+    function toggleHourFormat() {
+      is24Hour = !is24Hour;
+      localStorage.setItem('clock_24h', is24Hour ? '1' : '0');
+      updateHourLabel();
+      updateClocks();
+    }
+
+    function updateHourLabel() {
+      document.getElementById('hour-mode-label').innerText = is24Hour ? '24-Hour' : '12-Hour';
+      document.getElementById('flip-period-group').style.display = is24Hour ? 'none' : 'flex';
+    }
+
+    function toggleSeconds() {
+      showSeconds = !showSeconds;
+      localStorage.setItem('clock_seconds', showSeconds ? '1' : '0');
+      updateSecondsUI();
+      updateClocks();
+    }
+
+    function updateSecondsUI() {
+      var secLabel = document.getElementById('sec-mode-label');
+      secLabel.innerText = showSeconds ? 'ON' : 'OFF';
+      secLabel.style.color = showSeconds ? '#34d399' : '#f87171';
+
+      // Flip Clock seconds
+      document.getElementById('flip-sec-group').style.display = showSeconds ? 'flex' : 'none';
+      document.getElementById('flip-sec-divider').style.display = showSeconds ? 'block' : 'none';
+
+      // Analog Clock second hand
+      document.getElementById('analog-sec').style.display = showSeconds ? 'block' : 'none';
+    }
+
+    // High-performance 3D Fliqlo Card Flip
+    function flipTile(tileId, newVal, immediate) {
+      var tile = document.getElementById(tileId);
+      if (!tile) return;
+      var topVal = tile.querySelector('.tile-top .d-val');
+      var botVal = tile.querySelector('.tile-bottom .d-val');
+      var flapUp = tile.querySelector('.flap-upper .d-val');
+      var flapLo = tile.querySelector('.flap-lower .d-val');
+
+      if (immediate) {
+        topVal.innerText = newVal;
+        botVal.innerText = newVal;
+        flapUp.innerText = newVal;
+        flapLo.innerText = newVal;
+        return;
+      }
+
+      var currentVal = topVal.innerText;
+      if (currentVal === newVal) return;
+
+      topVal.innerText = newVal;
+      flapUp.innerText = currentVal;
+      flapLo.innerText = newVal;
+
+      tile.classList.remove('flipping');
+      void tile.offsetWidth;
+      tile.classList.add('flipping');
+
+      setTimeout(function() {
+        botVal.innerText = newVal;
+        tile.classList.remove('flipping');
+      }, 480);
+    }
+
+    function updateClocks(immediate) {
+      var now = new Date();
+      var hRaw = now.getHours();
+      var m = now.getMinutes();
+      var s = now.getSeconds();
+
+      var period = hRaw >= 12 ? 'PM' : 'AM';
+      var h = hRaw;
+
+      if (!is24Hour) {
+        h = h % 12;
+        if (h === 0) h = 12;
+      }
+
+      var hStr = (h < 10 ? '0' : '') + h;
+      var mStr = (m < 10 ? '0' : '') + m;
+      var sStr = (s < 10 ? '0' : '') + s;
+
+      var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      var dayName = days[now.getDay()];
+      var monthName = months[now.getMonth()];
+      var fullDateStr = dayName + ", " + monthName + " " + now.getDate() + ", " + now.getFullYear();
+
+      // Shared Date
+      document.getElementById('shared-date').innerText = fullDateStr;
+
+      // 1. Flip Clock
+      flipTile('flip-h1', hStr[0], immediate);
+      flipTile('flip-h2', hStr[1], immediate);
+      flipTile('flip-m1', mStr[0], immediate);
+      flipTile('flip-m2', mStr[1], immediate);
+      if (showSeconds) {
+        flipTile('flip-s1', sStr[0], immediate);
+        flipTile('flip-s2', sStr[1], immediate);
+      }
+      document.getElementById('flip-period').innerText = period;
+
+      // 2. Analog Clock
+      var hourAngle = ((hRaw % 12) + m / 60) * 30;
+      var minAngle = (m + s / 60) * 6;
+      var secAngle = s * 6;
+
+      document.getElementById('analog-hour').style.transform = 'rotate(' + hourAngle + 'deg)';
+      document.getElementById('analog-min').style.transform = 'rotate(' + minAngle + 'deg)';
+      if (showSeconds) {
+        document.getElementById('analog-sec').style.transform = 'rotate(' + secAngle + 'deg)';
+      }
+
+      // 3. CS50x Glow Clock
+      var cs50Str = hStr + ":" + mStr;
+      if (showSeconds) cs50Str += ":" + sStr;
+      if (!is24Hour) cs50Str += " " + period;
+      document.getElementById('cs50-clock').innerText = cs50Str;
+
+      // 4. Minimal Modern Clock
+      var modernStr = hStr + ":" + mStr;
+      if (showSeconds) modernStr += ":" + sStr;
+      if (!is24Hour) modernStr += '<span class="modern-period">' + period + '</span>';
+      document.getElementById('modern-clock').innerHTML = modernStr;
+    }
+
+    // Initialize state
+    updateHourLabel();
+    updateSecondsUI();
+    switchMode(currentMode);
+
+    updateClocks(true);
+    setInterval(function() { updateClocks(false); }, 1000);
+  </script>
+</body>
+</html>

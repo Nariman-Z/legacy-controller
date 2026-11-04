@@ -1,0 +1,55 @@
+# PlatformIO build artifacts & environments
+.pio/
+.pioenvs/
+.piolibdeps/
+*.pio.bak
+
+# PlatformIO & Toolchain configuration files
+.clangd/
+.gcc-flags.json
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# JetBrains / CLion / IntelliJ / Android Studio
+.idea/
+*.iml
+cmake-build-*/
+
+# Compiled binaries, firmware images & intermediate objects
+*.bin
+*.elf
+*.hex
+*.o
+*.obj
+*.a
+*.d
+*.map
+*.so
+*.dylib
+
+# Local configuration, secrets & credentials
+secrets.h
+credentials.h
+wifi_credentials.h
+*.local.h
+.env
+.env.local
+
+# Operating System temporary & index files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs & editor backup files
+*.log
+*.tmp
+*.bak
+*.swp
+*~

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Logged Out — Creative Electronic</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/webp" href="assets/images/icon.webp">
+  <link rel="stylesheet" href="assets/css/W3.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/raleway.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+  <style>
+    body, h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+    body, html { height: 100%; margin: 0; line-height: 1.8; background-color: #121212; color: #ffffff; }
+
+    .bgimg-1 {
+      background-position: center;
+      background-size: cover;
+      background-color: #0e0e0e;
+      background-image: url('assets/images/background.webp');
+      min-height: 100%;
+      position: relative;
+    }
+
+    .hero-overlay {
+      background: rgba(0, 0, 0, 0.72);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .logout-card {
+      background: rgba(28, 28, 30, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 40px 36px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      max-width: 460px;
+      width: 100%;
+    }
+
+    .return-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    }
+    .return-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <header class="bgimg-1">
+    <div class="hero-overlay">
+      <div class="logout-card">
+        <i class="fa fa-check-circle" style="font-size: 3.5rem; color: #4ade80; margin-bottom: 16px;"></i>
+        <h2 style="margin: 0 0 10px; font-weight: 700;">Logged Out Successfully</h2>
+        <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 24px;">
+          Your administrative session has ended securely. Returning to home in <span id="countdown">5</span> seconds...
+        </p>
+        <a href="/" class="return-btn"><i class="fa fa-home"></i> Return to Home Now</a>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    var sec = 5;
+    var timer = setInterval(function() {
+      sec--;
+      var el = document.getElementById("countdown");
+      if (el) el.innerText = sec;
+      if (sec <= 0) {
+        clearInterval(timer);
+        window.location.href = "/";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

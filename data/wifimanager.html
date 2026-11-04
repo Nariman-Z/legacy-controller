@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Wi-Fi Setup — Creative Electronic</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/webp" href="assets/images/icon.webp">
+  <link rel="stylesheet" href="assets/css/W3.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/raleway.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+  <style>
+    body, h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+    body, html { height: 100%; margin: 0; line-height: 1.8; background-color: #121212; color: #ffffff; }
+
+    .bgimg-1 {
+      background-position: center;
+      background-size: cover;
+      background-color: #0e0e0e;
+      background-image: url('assets/images/background.webp');
+      min-height: 100%;
+      position: relative;
+    }
+
+    .hero-overlay {
+      background: rgba(0, 0, 0, 0.72);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 80px 20px;
+    }
+
+    .w3-bar .w3-button { padding: 16px 20px; font-weight: 500; }
+    .w3-bar { background-color: rgba(18, 18, 18, 0.95) !important; backdrop-filter: blur(8px); }
+
+    .setup-card {
+      background: rgba(28, 28, 30, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 36px 32px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease;
+    }
+    input[type=text]:focus, input[type=password]:focus {
+      border-color: #a855f7;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+      margin-top: 10px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+    }
+
+    .hint-text {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-card" id="myNavbar">
+      <a href="/" class="w3-bar-item w3-button w3-wide" title="Home">
+        <i class="fa fa-home"></i> HOME
+      </a>
+      <div class="w3-right w3-hide-small">
+        <a href="/dashboard" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+        <a href="/weather" class="w3-bar-item w3-button"><i class="fa fa-thermometer-half"></i> Weather</a>
+        <a href="/clock" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+      </div>
+      <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar -->
+  <nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none; z-index: 1000;" id="mySidebar">
+    <a href="javascript:void(0)" onclick="closeSidebar()" class="w3-bar-item w3-button w3-large w3-padding-16"><i class="fa fa-times"></i> Close</a>
+    <a href="/" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> Home</a>
+    <a href="/dashboard" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+    <a href="/weather" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-thermometer-half"></i> Weather</a>
+    <a href="/clock" onclick="closeSidebar()" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+  </nav>
+
+  <header class="bgimg-1">
+    <div class="hero-overlay">
+      <div class="setup-card">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h2 style="margin: 0; font-weight: 700;"><i class="fa fa-wifi" style="color:#a855f7;"></i> Wi-Fi Manager</h2>
+          <span style="color:#94a3b8; font-size:0.9rem;">Configure router connection credentials</span>
+        </div>
+
+        <form action="/" method="POST">
+          <div class="form-group">
+            <label for="ssid"><i class="fa fa-rss"></i> Network SSID</label>
+            <input type="text" id="ssid" name="ssid" placeholder="Enter Wi-Fi network name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="pass"><i class="fa fa-key"></i> Password</label>
+            <input type="password" id="pass" name="pass" placeholder="Enter network password">
+            <div class="hint-text">Leave blank if network is open.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="ip"><i class="fa fa-globe"></i> Static IP Address (Optional)</label>
+            <input type="text" id="ip" name="ip" placeholder="e.g. 192.168.1.150">
+            <div class="hint-text">Leave blank or enter 'DHCP' for automatic router assignment.</div>
+          </div>
+
+          <button type="submit" class="submit-btn"><i class="fa fa-save"></i> Save & Connect</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    var sidebar = document.getElementById("mySidebar");
+    function toggleSidebar() { sidebar.style.display = (sidebar.style.display === 'block') ? 'none' : 'block'; }
+    function closeSidebar() { sidebar.style.display = 'none'; }
+
+    // Pre-populate fields if saved configuration exists
+    fetch('/api/wifi-config').then(function(res) {
+      if (res.ok) return res.json();
+      throw new Error();
+    }).then(function(data) {
+      if (data.ssid) document.getElementById('ssid').value = data.ssid;
+      if (data.ip) document.getElementById('ip').value = data.ip;
+    }).catch(function() {});
+  </script>
+</body>
+</html>

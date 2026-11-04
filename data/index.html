@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Creative Electronic — Smart Home IoT Controller</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/webp" href="assets/images/icon.webp">
+  <link rel="stylesheet" href="assets/css/W3.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/raleway.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+  <style>
+    body, h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+    body, html {
+      height: 100%;
+      line-height: 1.8;
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    /* Full height image header */
+    .bgimg-1 {
+      background-position: center;
+      background-size: cover;
+      background-image: url('assets/images/background.webp');
+      min-height: 100%;
+      background-color: #000;
+    }
+
+    .w3-bar .w3-button {
+      padding: 16px 20px;
+    }
+
+    .w3-bar {
+      background-color: rgba(0, 0, 0, 0.85) !important;
+      backdrop-filter: blur(8px);
+    }
+
+    .cta-container {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      border-radius: 6px;
+      min-width: 200px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+    }
+
+    @media (max-width: 600px) {
+      .cta-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .cta-btn {
+        width: 100%;
+        max-width: 230px;
+        min-width: 230px;
+        margin: 0 !important;
+      }
+    }
+
+    .social-bar a {
+      margin-right: 14px;
+      color: #b0b0b0;
+      transition: color 0.2s ease, transform 0.2s ease;
+      display: inline-block;
+    }
+    .social-bar a:hover {
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-card" id="myNavbar">
+      <a href="/" class="w3-bar-item w3-button w3-wide" title="Home">
+        <i class="fa fa-home"></i> HOME
+      </a>
+      
+      <!-- Desktop Menu Links -->
+      <div class="w3-right w3-hide-small">
+        <a href="/dashboard" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+        <a href="/weather" class="w3-bar-item w3-button"><i class="fa fa-thermometer-full"></i> Weather</a>
+        <a href="/clock" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="w3_open()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Collapsible Sidebar -->
+  <nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none; z-index: 1000;" id="mySidebar">
+    <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button w3-large w3-padding-16"><i class="fa fa-times"></i> Close</a>
+    <a href="/" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> Home</a>
+    <a href="/dashboard" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-sliders"></i> Dashboard</a>
+    <a href="/weather" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-thermometer-full"></i> Weather</a>
+    <a href="/clock" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-clock-o"></i> Clock</a>
+  </nav>
+
+  <!-- Hero Header Section -->
+  <header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
+    <div class="w3-display-left w3-text-white" style="padding: 48px;">
+      <span class="w3-jumbo w3-hide-small" style="font-weight: 700; letter-spacing: -1px;">Creative Electronic</span><br>
+      <span class="w3-xxlarge w3-hide-large w3-hide-medium" style="font-weight: 700;">Creative Electronic</span><br>
+      <span class="w3-large" style="color: #e2e8f0;">Smart Home IoT Controller &bull; With us, future is now.</span>
+      <div class="cta-container">
+        <a href="/dashboard" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off cta-btn">
+          <i class="fa fa-sliders" style="margin-right: 8px;"></i> Enter Dashboard
+        </a>
+        <a href="https://github.com/Nariman-Z/legacy-controller" target="_blank" rel="noopener noreferrer" class="w3-button w3-black w3-padding-large w3-large w3-opacity w3-hover-opacity-off cta-btn">
+          <i class="fa fa-github" style="margin-right: 8px;"></i> GitHub Repo
+        </a>
+      </div>
+    </div> 
+
+    <!-- Bottom Left Social Links Bar -->
+    <div class="w3-display-bottomleft w3-text-grey w3-large social-bar" style="padding: 24px 48px;">
+      <a href="https://t.me/Nariman_Z" target="_blank" title="Telegram"><i class="fa fa-telegram"></i></a>
+      <a href="https://wa.me/+989197096780" target="_blank" title="WhatsApp"><i class="fa fa-whatsapp"></i></a>
+      <a href="https://www.instagram.com/creative_electronic_tm/" target="_blank" title="Instagram"><i class="fa fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@Nariman_Z" target="_blank" title="YouTube"><i class="fa fa-youtube"></i></a>
+      <a href="https://www.linkedin.com/in/nariman-z" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+      <a href="https://github.com/nariman-z/" target="_blank" title="GitHub"><i class="fa fa-github"></i></a>
+    </div>
+  </header>
+ 
+  <script>
+    var mySidebar = document.getElementById("mySidebar");
+    function w3_open() {
+      if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none';
+      } else {
+        mySidebar.style.display = 'block';
+      }
+    }
+    function w3_close() {
+      mySidebar.style.display = "none";
+    }
+  </script>
+</body>
+</html>
